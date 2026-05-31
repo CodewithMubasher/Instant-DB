@@ -19,7 +19,7 @@
 
 **Just open the HTML file and start working instantly.**
 
-[🎯 Try Live Demo](#demo) | [📖 Documentation](#features) | [🤝 Contribute](#contributing)
+[🎯 Try Live Demo](https://codewithmubasher.github.io/Instant-DB/) | [📖 Documentation](#features) | [🤝 Contribute](#contributing)
 
 ---
 
