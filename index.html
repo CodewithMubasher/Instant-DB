@@ -603,7 +603,7 @@
               <span><strong>Sample Database</strong><small>Explore with preloaded demo data</small></span>
             </button>
           </div>
-          <div style="font-size:11px;color:color-mix(in srgb,var(--foreground) 40%,transparent);margin-top:8px;display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:oklch(0.627 0.194 163.225);flex-shrink:0;"></span>Info: Add your own API key in Settings to use AI features</div>
+          <div style="font-size:11px;color:color-mix(in srgb,var(--foreground) 40%,transparent);margin-top:8px;display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:oklch(0.627 0.194 163.225);flex-shrink:0;"></span>AI: Add your API key in Settings to use AI features</div>
         </div>
 
         <!-- DASHBOARD — Empty Workspace -->
@@ -2535,31 +2535,50 @@ function applySettings() {
 }
 
 // ================== AI ASSISTANT ==================
+const DEFAULT_AI_KEYS={openai:'',gemini:'',openrouter:''}; // ← Edit these to add permanent keys
 function getAiKeys() {
-  try{ return JSON.parse(localStorage.getItem('instantDb_aiKeys'))||{}; }catch{ return {}; }
+  const def={...DEFAULT_AI_KEYS};
+  try{
+    const saved=JSON.parse(localStorage.getItem('instantDb_aiKeys'))||{};
+    Object.keys(def).forEach(k=>{ if(saved[k]) def[k]=saved[k]; });
+    return def;
+  }catch{ return def; }
 }
 function saveAiKeys(keys){ localStorage.setItem('instantDb_aiKeys',JSON.stringify(keys)); }
 function renderAiKeys() {
-  const keys=getAiKeys(); const el=document.getElementById('ai-keys-list'); el.innerHTML='';
+  const merged=getAiKeys();
+  let saved;
+  try{ saved=JSON.parse(localStorage.getItem('instantDb_aiKeys'))||{}; }catch{ saved={}; }
+  const el=document.getElementById('ai-keys-list'); el.innerHTML='';
   const providers={'openai':'OpenAI','gemini':'Gemini','openrouter':'OpenRouter'};
-  Object.entries(keys).forEach(([k,v])=>{
+  let hasAny=false;
+  Object.entries(merged).forEach(([k,v])=>{
+    if(!v) return;
+    hasAny=true;
+    const isDefault=!saved[k];
     const row=document.createElement('div'); row.style.cssText='display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--card);border-radius:var(--radius-sm);margin-bottom:4px;font-size:12px;';
-    row.innerHTML='<span style="color:color-mix(in srgb,var(--foreground) 45%,transparent);font-weight:500;">'+(providers[k]||k)+'</span><span style="flex:1;color:color-mix(in srgb,var(--foreground) 50%,transparent);font-family:var(--font-mono);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+v.slice(0,20)+'...'+v.slice(-4)+'</span><button onclick="removeAiKey(\''+k+'\')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:2px;line-height:1;">&times;</button>';
+    row.innerHTML='<span style="color:color-mix(in srgb,var(--foreground) 45%,transparent);font-weight:500;">'+(providers[k]||k)+(isDefault?' <span style="font-size:10px;color:color-mix(in srgb,var(--foreground) 40%,transparent);font-weight:400;">(default)</span>':'')+'</span><span style="flex:1;color:color-mix(in srgb,var(--foreground) 50%,transparent);font-family:var(--font-mono);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+v.slice(0,20)+'...'+v.slice(-4)+'</span>'+(isDefault?'':'<button onclick="removeAiKey(\''+k+'\')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:2px;line-height:1;">&times;</button>');
     el.appendChild(row);
   });
-  if(!Object.keys(keys).length) el.innerHTML='<div style="font-size:12px;color:color-mix(in srgb,var(--foreground) 45%,transparent);padding:4px 0;">No API keys configured.</div>';
+  if(!hasAny) el.innerHTML='<div style="font-size:12px;color:color-mix(in srgb,var(--foreground) 45%,transparent);padding:4px 0;">No API keys. Add one above or edit DEFAULT_AI_KEYS in source.</div>';
 }
 function addAiKey() {
   const prov=document.getElementById('ai-key-provider').value;
   const key=document.getElementById('ai-key-input').value.trim();
   if(!key){ toast('Enter an API key','error'); return; }
-  const keys=getAiKeys(); keys[prov]=key; saveAiKeys(keys);
+  let saved;
+  try{ saved=JSON.parse(localStorage.getItem('instantDb_aiKeys'))||{}; }catch{ saved={}; }
+  saved[prov]=key; saveAiKeys(saved);
   document.getElementById('ai-key-input').value='';
   renderAiKeys(); toast(prov.charAt(0).toUpperCase()+prov.slice(1)+' API key saved','success');
 }
 function removeAiKey(prov) {
-  const keys=getAiKeys(); delete keys[prov]; saveAiKeys(keys);
-  renderAiKeys(); toast('Key removed','info');
+  let saved;
+  try{ saved=JSON.parse(localStorage.getItem('instantDb_aiKeys'))||{}; }catch{ saved={}; }
+  delete saved[prov];
+  saveAiKeys(saved);
+  renderAiKeys();
+  toast(DEFAULT_AI_KEYS[prov]?'Reverted to default key':'Key removed','info');
 }
 // ================== AI HELPERS ==================
 function _buildSchemaCtx() {
