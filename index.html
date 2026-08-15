@@ -122,7 +122,7 @@
 
   /* LAYOUT */
   #app { display: flex; flex-direction: column; height: 100vh; }
-  #topbar { display: flex; align-items: center; height: var(--topbar-h); background: var(--sidebar); border-bottom: 1px solid var(--sidebar-border); padding: 0 12px; gap: 4px; flex-shrink: 0; user-select: none; }
+  #topbar { display: flex; align-items: center; height: var(--topbar-h); background: var(--sidebar); border-bottom: 1px solid var(--sidebar-border); padding: 0 12px; gap: 4px; flex-shrink: 0; user-select: none; position: relative; }
   #main { display: flex; flex: 1; overflow: hidden; }
   #sidebar { width: var(--sidebar-w); background: var(--sidebar); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden; }
   #workspace { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--background); }
@@ -142,13 +142,13 @@
   .tb-btn:hover { background: var(--sidebar-accent); color: var(--sidebar-accent-foreground); }
   .tb-btn svg { flex-shrink: 0; }
   .tb-btn.active { background:var(--sidebar-accent); color:var(--sidebar-accent-foreground); }
-  .tb-db-name { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12.5px; color: color-mix(in srgb, var(--sidebar-foreground) 55%, transparent); }
+  .tb-db-name { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12.5px; color: color-mix(in srgb, var(--sidebar-foreground) 55%, transparent); max-width: 40%; white-space: nowrap; overflow: hidden; }
   .tb-db-name span.name { color: var(--sidebar-foreground); font-weight: 500; }
   .tb-db-name span.path { color: color-mix(in srgb, var(--sidebar-foreground) 45%, transparent); font-size: 11.5px; font-family: var(--font-mono); }
   .status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; transition: background .3s, box-shadow .3s; }
   .status-dot.on { background: var(--green); box-shadow: 0 0 6px var(--green); }
   .status-dot.off { background: color-mix(in srgb, var(--sidebar-foreground) 30%, transparent); box-shadow: none; }
-  .tb-right { display: flex; align-items: center; gap: 2px; }
+  .tb-right { display: flex; align-items: center; gap: 2px; margin-left: auto; }
   .win-btn { width: 13px; height: 13px; border-radius: 50%; cursor: pointer; flex-shrink: 0; }
   .win-close { background: var(--red); }
   .win-min { background: var(--yellow); }
@@ -307,6 +307,25 @@
   #rp-ai.visible { flex:1; }
   .ai-preset { padding:4px 10px;border-radius:20px;border:1px solid var(--sidebar-border);background:transparent;color:color-mix(in srgb,var(--sidebar-foreground) 50%,transparent);font-size:11px;cursor:pointer;font-family:var(--font-ui);transition:all .15s;white-space:nowrap; }
   .ai-preset:hover { border-color:var(--sidebar-primary);color:var(--sidebar-foreground);background:color-mix(in srgb,var(--sidebar-primary) 8%,transparent); }
+  .ai-model-btn { display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--sidebar-border);border-radius:var(--radius-sm);color:var(--sidebar-foreground);font-family:var(--font-ui);font-size:11px;padding:4px 8px;cursor:pointer;transition:border-color .15s,background .15s;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0; }
+  .ai-model-btn:hover:not(:disabled) { border-color:var(--sidebar-primary); }
+  .ai-model-btn:disabled { opacity:.6;cursor:default; }
+  .ai-model-btn .caret { font-size:9px;opacity:.65;flex-shrink:0; }
+  .ai-model-btn .ai-model-label { flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+  .ai-model-dd { position:fixed;z-index:1000;background:var(--card);border:1px solid var(--sidebar-border);border-radius:6px;box-shadow:0 2px 6px oklch(0 0 0/0.25),0 12px 28px oklch(0 0 0/0.28);max-height:340px;overflow-y:auto;font-family:var(--font-ui);font-size:11.5px;color:var(--sidebar-foreground);padding:4px;box-sizing:border-box;display:none;min-width:220px; }
+  .ai-model-dd.open { display:block; }
+  .ai-model-dd-group { padding:5px 10px 2px;font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:color-mix(in srgb,var(--sidebar-foreground) 45%,transparent); }
+  .ai-model-dd-item { display:flex;align-items:center;gap:8px;padding:4px 10px;border-radius:4px;cursor:default;transition:background .08s; }
+  .ai-model-dd-item:hover { background:var(--sidebar-primary); color:var(--sidebar-primary-foreground); }
+  .ai-model-dd-item.selected { background:color-mix(in srgb,var(--sidebar-primary) 14%,transparent); }
+  .ai-model-dd-item.selected:hover { background:var(--sidebar-primary); color:var(--sidebar-primary-foreground); }
+  .ai-model-dd-item .name { flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+  .ai-model-dd-item .tag { font-size:9px;font-weight:600;color:var(--green);flex-shrink:0; }
+  .ai-model-dd-item:hover .tag { color:var(--sidebar-primary-foreground); }
+  .ai-model-dd-item .check { color:var(--sidebar-primary);font-size:10px;flex-shrink:0; }
+  .ai-model-dd-item:hover .check { color:var(--sidebar-primary-foreground); }
+  .ai-model-dd-empty { padding:12px;text-align:center;color:color-mix(in srgb,var(--sidebar-foreground) 55%,transparent);font-size:11px; }
+  .ai-model-dd-note { padding:6px 10px 4px;font-size:10px;color:color-mix(in srgb,var(--sidebar-foreground) 45%,transparent);border-top:1px solid var(--sidebar-border);margin-top:4px; }
   #ai-input::placeholder { color:color-mix(in srgb,var(--sidebar-foreground) 40%,transparent); }
   .db-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .db-stat-card { background: var(--card); border-radius: var(--radius-sm); padding: 8px; }
@@ -315,6 +334,17 @@
   .db-stat-sub { font-size: 10.5px; color: color-mix(in srgb, var(--foreground) 45%, transparent); margin-top: 8px; }
   .size-bar { height: 6px; background: var(--background); border-radius: 3px; overflow: hidden; margin-top: 6px; }
   .size-bar-fill { height: 100%; background: linear-gradient(90deg, var(--sidebar-primary), var(--cyan)); border-radius: 3px; }
+
+  /* PRODUCT TOUR */
+  #tour-spotlight { position: fixed; z-index: 1100; border-radius: 8px; box-shadow: 0 0 0 9999px oklch(0 0 0 / 0.5), 0 0 0 2px var(--sidebar-primary); pointer-events: none; transition: all .25s ease; display: none; }
+  #tour-tip { position: fixed; z-index: 1101; width: 300px; background: var(--panel); border: 1px solid var(--sidebar-border); border-radius: calc(var(--radius) + 2px); box-shadow: 0 16px 48px oklch(0 0 0 / 0.55); padding: 14px 16px; font-family: var(--font-ui); color: var(--foreground); font-size: 12.5px; display: none; }
+  #tour-tip .t-title { font-weight: 700; font-size: 13.5px; margin-bottom: 6px; color: var(--foreground); }
+  #tour-tip .t-desc { color: color-mix(in srgb, var(--foreground) 72%, transparent); line-height: 1.5; margin-bottom: 12px; }
+  #tour-tip .t-actions { display: flex; align-items: center; gap: 6px; }
+  #tour-tip .t-btn { padding: 6px 12px; border-radius: var(--radius-sm); border: 1px solid var(--sidebar-border); font-family: var(--font-ui); font-size: 12px; cursor: pointer; background: var(--card); color: color-mix(in srgb, var(--foreground) 65%, transparent); }
+  #tour-tip .t-btn.primary { background: var(--sidebar-primary); color: var(--sidebar-primary-foreground); border-color: transparent; }
+  #tour-tip .t-skip { background: none; border: none; color: color-mix(in srgb, var(--foreground) 45%, transparent); font-size: 11.5px; cursor: pointer; padding: 6px 4px; }
+  #tour-tip .t-count { margin-left: auto; font-size: 11px; color: color-mix(in srgb, var(--foreground) 45%, transparent); }
 
   /* MODALS */
   .modal-overlay { position: fixed; inset: 0; background: oklch(0 0 0 / 0.6); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; }
@@ -498,11 +528,11 @@
       Instant-DB
     </div>
     <div class="tb-sep"></div>
-    <button class="tb-btn" onclick="showNewDbModal()">
+    <button class="tb-btn" id="tb-new" onclick="showNewDbModal()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
       New
     </button>
-    <button class="tb-btn" onclick="openDbFile()">
+    <button class="tb-btn" id="tb-open" onclick="openDbFile()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
       Open
     </button>
@@ -522,6 +552,10 @@
       <span style="color:var(--text-muted);font-size:11px;margin-left:4px;">• SQLite 3.45.1</span>
     </div>
     <div class="tb-right" style="display:flex;align-items:center;gap:8px;">
+      <button class="tb-btn" onclick="startTour()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        Tour
+      </button>
       <button class="tb-btn" id="btn-ai" onclick="toggleAiPanel()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
         AI
@@ -598,7 +632,7 @@
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
               <span><strong>Open Database</strong><small>Open an existing database file</small></span>
             </button>
-            <button class="welcome-action" onclick="loadSampleDb()">
+            <button class="welcome-action" id="sample-db-btn" onclick="loadSampleDb()">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
               <span><strong>Sample Database</strong><small>Explore with preloaded demo data</small></span>
             </button>
@@ -820,7 +854,7 @@
           <div style="display:flex;align-items:center;padding:10px 12px;border-bottom:1px solid var(--sidebar-border);gap:6px;flex-shrink:0;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--sidebar-primary);"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
             <span style="font-size:12px;font-weight:600;color:color-mix(in srgb,var(--sidebar-foreground) 55%,transparent);">AI Assistant</span>
-            <button onclick="toggleAiPanel()" style="margin-left:auto;background:none;border:none;color:color-mix(in srgb,var(--sidebar-foreground) 45%,transparent);cursor:pointer;font-size:14px;padding:2px;">&times;</button>
+            <button id="ai-model-btn" class="ai-model-btn" style="margin-left:auto;" onclick="toggleAiModelDropdown()"><span class="ai-model-label">Select model</span> <span class="caret">&#9662;</span></button>
           </div>
           <div id="ai-chat" style="flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:10px;font-size:12.5px;">
             <div id="ai-empty" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:color-mix(in srgb,var(--sidebar-foreground) 40%,transparent);">
@@ -917,7 +951,7 @@
       </div>
       <div id="ai-keys-list" style="margin-bottom:10px;"></div>
       <div style="display:flex;gap:6px;">
-        <select class="form-select" id="ai-key-provider" style="width:auto;flex-shrink:0;"><option value="openai">OpenAI</option><option value="gemini">Gemini</option><option value="openrouter">OpenRouter</option></select>
+        <select class="form-select" id="ai-key-provider" style="width:auto;flex-shrink:0;"><option value="openai">OpenAI</option><option value="gemini">Gemini</option><option value="groq">Groq</option><option value="openrouter">OpenRouter</option></select>
         <input class="form-input" id="ai-key-input" placeholder="sk-..." style="flex:1;">
         <button class="btn btn-primary" onclick="addAiKey()" style="flex-shrink:0;white-space:nowrap;">Add</button>
       </div>
@@ -1387,7 +1421,7 @@ function loadSampleDb() {
       }
       db.run(`INSERT INTO settings VALUES('version','2.0'),('theme','dark'),('locale','en_US'),('timezone','UTC'),('page_size','50'),('notifications','enabled')`);
       document.getElementById('db-name-display').textContent='sample.db';
-      document.getElementById('db-path-display').textContent='In-memory sample database (200 users, 600 orders, 60 products, 30 employees)';
+      document.getElementById('db-path-display').textContent='';
       document.getElementById('status-dot').className='status-dot on';
       hideLoading();
       refreshSidebar();
@@ -1597,8 +1631,8 @@ function showTableView() {
   document.getElementById('er-view').classList.add('hidden');
   document.getElementById('rp-db-stats').style.display='';
 }
-function showSqlView() {
-  closeAiPanel();
+function showSqlView(keepAi) {
+  if(!keepAi) closeAiPanel();
   document.getElementById('dashboard').classList.remove('visible');
   document.getElementById('welcome').classList.add('hidden');
   document.getElementById('table-view').classList.add('hidden');
@@ -2535,7 +2569,7 @@ function applySettings() {
 }
 
 // ================== AI ASSISTANT ==================
-const DEFAULT_AI_KEYS={openai:'',gemini:'',openrouter:'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'};
+const DEFAULT_AI_KEYS={openai:'',gemini:'',openrouter:'',groq:''};
 function getAiKeys() {
   const def={...DEFAULT_AI_KEYS};
   try{
@@ -2550,7 +2584,7 @@ function renderAiKeys() {
   let saved;
   try{ saved=JSON.parse(localStorage.getItem('instantDb_aiKeys'))||{}; }catch{ saved={}; }
   const el=document.getElementById('ai-keys-list'); el.innerHTML='';
-  const providers={'openai':'OpenAI','gemini':'Gemini','openrouter':'OpenRouter'};
+  const providers={'openai':'OpenAI','gemini':'Gemini','groq':'Groq','openrouter':'OpenRouter'};
   let hasAny=false;
   Object.entries(merged).forEach(([k,v])=>{
     if(!v) return;
@@ -2560,7 +2594,8 @@ function renderAiKeys() {
     row.innerHTML='<span style="color:color-mix(in srgb,var(--foreground) 45%,transparent);font-weight:500;">'+(providers[k]||k)+(isDefault?' <span style="font-size:10px;color:color-mix(in srgb,var(--foreground) 40%,transparent);font-weight:400;">(default)</span>':'')+'</span><span style="flex:1;color:color-mix(in srgb,var(--foreground) 50%,transparent);font-family:var(--font-mono);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+v.slice(0,20)+'...'+v.slice(-4)+'</span>'+(isDefault?'':'<button onclick="removeAiKey(\''+k+'\')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:2px;line-height:1;">&times;</button>');
     el.appendChild(row);
   });
-  if(!hasAny) el.innerHTML='<div style="font-size:12px;color:color-mix(in srgb,var(--foreground) 45%,transparent);padding:4px 0;">No API keys. Add one above or edit DEFAULT_AI_KEYS in source.</div>';
+  if(!hasAny) el.innerHTML='<div style="font-size:12px;color:color-mix(in srgb,var(--foreground) 45%,transparent);padding:4px 0;">No API keys saved. Add one above (e.g. Groq or OpenRouter — both have free tiers) to use the AI assistant.</div>';
+  refreshAiModelSelect();
 }
 function addAiKey() {
   const prov=document.getElementById('ai-key-provider').value;
@@ -2593,8 +2628,178 @@ function _buildSchemaCtx() {
   return ctx;
 }
 function _getActiveKey() {
-  const keys=getAiKeys(); return ['openai','gemini','openrouter'].find(p=>keys[p]);
+  const keys=getAiKeys(); return ['openai','gemini','openrouter','groq'].find(p=>keys[p]);
 }
+const AI_MODELS_OPENAI=[
+  {id:'gpt-4o-mini',name:'GPT-4o mini'},
+  {id:'gpt-4o',name:'GPT-4o'},
+  {id:'gpt-4.1-mini',name:'GPT-4.1 mini'}
+];
+const AI_MODELS_GEMINI=[
+  {id:'gemini-2.5-flash',name:'Gemini 2.5 Flash'},
+  {id:'gemini-2.0-flash',name:'Gemini 2.0 Flash'},
+  {id:'gemini-1.5-flash',name:'Gemini 1.5 Flash'}
+];
+const AI_MODELS_GROQ_FALLBACK=[
+  {id:'llama-3.3-70b-versatile',name:'Llama 3.3 70B Versatile'},
+  {id:'llama-3.1-8b-instant',name:'Llama 3.1 8B Instant'},
+  {id:'deepseek-r1-distill-llama-70b',name:'DeepSeek R1 Distill Llama 70B'},
+  {id:'meta-llama/llama-4-scout-17b-16e-instruct',name:'Llama 4 Scout 17B'},
+  {id:'meta-llama/llama-4-maverick-17b-128e-instruct',name:'Llama 4 Maverick 17B'},
+  {id:'gemma2-9b-it',name:'Gemma 2 9B IT'},
+  {id:'mixtral-8x7b-32768',name:'Mixtral 8x7B'}
+];
+let _groqModels=null;
+let _groqModelsFetch=null;
+function getGroqModelsSync(){ return _groqModels; }
+function getGroqModels(){
+  const apiKey=getAiKeys().groq;
+  if(!apiKey) return Promise.resolve(AI_MODELS_GROQ_FALLBACK);
+  if(_groqModels) return Promise.resolve(_groqModels);
+  if(_groqModelsFetch) return _groqModelsFetch;
+  _groqModelsFetch=fetch('https://api.groq.com/openai/v1/models',{method:'GET',headers:{'Authorization':'Bearer '+apiKey}})
+    .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(json=>{
+      const list=(json&&json.data)||[];
+      const models=list.filter(m=>m&&m.id&&!/whisper/i.test(m.id))
+        .map(m=>({id:m.id,name:(m.name||m.id.replace(/.*\//,''))}))
+        .sort((a,b)=>a.id.localeCompare(b.id));
+      _groqModels=models.length?models:AI_MODELS_GROQ_FALLBACK.slice();
+      return _groqModels;
+    })
+    .catch(()=>{ _groqModels=AI_MODELS_GROQ_FALLBACK.slice(); return _groqModels; })
+    .finally(()=>{ _groqModelsFetch=null; });
+  return _groqModelsFetch;
+}
+const OPENROUTER_FREE_FALLBACK=[
+  'meta-llama/llama-3.3-70b-instruct','deepseek/deepseek-chat','google/gemini-2.5-flash','openai/gpt-4o-mini','moonshotai/kimi-k2-instruct','mistralai/mistral-small-3.2-24b-instruct','qwen/qwen-2.5-72b-instruct','nvidia/nemotron-3-ultra','google/gemma-4-31b','google/gemma-4-26b-a4b','meta-llama/llama-4-scout','deepseek/deepseek-r1','mistralai/mistral-nemo','google/gemini-2.0-flash-exp:free'
+].map(id=>({id,name:id.split('/').pop()}));
+let _openRouterFreeModels=null;
+let _openRouterFreeFetch=null;
+let _aiCurrentSel=null;
+try{ _aiCurrentSel=JSON.parse(localStorage.getItem('instantDb_aiModel')||'null'); }catch{}
+function getOpenRouterFreeSync() {
+  if(_openRouterFreeModels) return _openRouterFreeModels;
+  try{
+    const raw=localStorage.getItem('instantDb_aiFreeModels');
+    if(raw){ const c=JSON.parse(raw); if(c&&Array.isArray(c.models)&&Date.now()-c.ts<86400000){ _openRouterFreeModels=c.models; return c.models; } }
+  }catch{}
+  return null;
+}
+function getOpenRouterFreeModels() {
+  if(_openRouterFreeModels) return Promise.resolve(_openRouterFreeModels);
+  if(_openRouterFreeFetch) return _openRouterFreeFetch;
+  _openRouterFreeFetch=fetch('https://openrouter.ai/api/v1/models?output_modalities=text',{method:'GET'})
+    .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(json=>{
+      const list=(json&&json.data)||[];
+      const isFree=m=>{ const p=m.pricing||{}; return ['prompt','completion','request','image','web_search'].every(k=>{ const v=p[k]; return v===undefined||v===null||parseFloat(v)===0; }); };
+      const models=list.filter(m=>m&&m.id&&isFree(m))
+        .filter(m=>!m.id.includes(':thinking')&&!m.id.includes(':extended'))
+        .map(m=>({id:m.id,name:(m.name||m.id.split('/').pop())}))
+        .sort((a,b)=>a.id.localeCompare(b.id));
+      _openRouterFreeModels=models.length?models:OPENROUTER_FREE_FALLBACK.slice();
+      try{ localStorage.setItem('instantDb_aiFreeModels',JSON.stringify({ts:Date.now(),models:_openRouterFreeModels})); }catch{}
+      return _openRouterFreeModels;
+    })
+    .catch(()=>{ _openRouterFreeModels=OPENROUTER_FREE_FALLBACK.slice(); return _openRouterFreeModels; })
+    .finally(()=>{ _openRouterFreeFetch=null; });
+  return _openRouterFreeFetch;
+}
+function buildModelGroups() {
+  const keys=getAiKeys(); const groups=[];
+  if(keys.openai) groups.push({group:'OpenAI',provider:'openai',models:AI_MODELS_OPENAI});
+  if(keys.gemini) groups.push({group:'Gemini',provider:'gemini',models:AI_MODELS_GEMINI});
+  if(keys.groq) groups.push({group:'Groq',provider:'groq',models:getGroqModelsSync()||AI_MODELS_GROQ_FALLBACK.slice()});
+  if(keys.openrouter) groups.push({group:'OpenRouter · Free',provider:'openrouter',models:getOpenRouterFreeSync()||OPENROUTER_FREE_FALLBACK.slice()});
+  return groups;
+}
+function initAiModelSelect(){ refreshAiModelSelect(); }
+function refreshAiModelSelect() {
+  const btn=document.getElementById('ai-model-btn'); if(!btn) return;
+  const keys=getAiKeys();
+  const hasAny=['openai','gemini','openrouter','groq'].some(p=>keys[p]);
+  if(!hasAny){
+    btn.style.display='none';
+    closeAiModelDropdown();
+    return;
+  }
+  btn.style.display='';
+  const groups=buildModelGroups();
+  if(_aiCurrentSel&&_aiCurrentSel.provider&&keys[_aiCurrentSel.provider]&&groups.some(g=>g.provider===_aiCurrentSel.provider&&g.models.some(m=>m.id===_aiCurrentSel.model))){
+    btn.innerHTML='<span class="ai-model-label">'+escapeHtml(_aiCurrentSel.label||_aiCurrentSel.model.split('/').pop())+'</span> <span class="caret">&#9662;</span>';
+    return;
+  }
+  _aiCurrentSel=null;
+  const first=groups[0];
+  if(first&&first.models.length){ setAiModel(first.provider,first.models[0]); }
+  else btn.innerHTML='<span class="ai-model-label">Select model</span> <span class="caret">&#9662;</span>';
+}
+function setAiModel(provider,model) {
+  _aiCurrentSel={provider:provider,model:model.id,label:model.name};
+  try{ localStorage.setItem('instantDb_aiModel',JSON.stringify(_aiCurrentSel)); }catch{}
+  refreshAiModelSelect();
+  closeAiModelDropdown();
+}
+function getAiModelSelection() {
+  if(_aiCurrentSel&&_aiCurrentSel.provider) return {provider:_aiCurrentSel.provider,model:_aiCurrentSel.model};
+  return null;
+}
+function toggleAiModelDropdown(){
+  if(!_getActiveKey()){ toast('Add an API key in Settings to use the AI assistant','info'); return; }
+  const dd=document.getElementById('ai-model-dd');
+  if(dd&&dd.classList.contains('open')){ closeAiModelDropdown(); return; }
+  openAiModelDropdown();
+}
+function openAiModelDropdown() {
+  const btn=document.getElementById('ai-model-btn');
+  let dd=document.getElementById('ai-model-dd');
+  if(!dd){ dd=document.createElement('div'); dd.id='ai-model-dd'; dd.className='ai-model-dd'; document.body.appendChild(dd); }
+  const keys=getAiKeys();
+  const groups=buildModelGroups();
+  let hasModels=false;
+  dd.innerHTML='';
+  groups.forEach(g=>{
+    if(!g.models.length) return;
+    hasModels=true;
+    const gh=document.createElement('div'); gh.className='ai-model-dd-group'; gh.textContent=g.group;
+    dd.appendChild(gh);
+    g.models.forEach(m=>{
+      const it=document.createElement('div'); it.className='ai-model-dd-item';
+      if(_aiCurrentSel&&_aiCurrentSel.model===m.id) it.classList.add('selected');
+      it.innerHTML='<span class="name">'+escapeHtml(m.name)+'</span>'+(g.provider==='openrouter'?'<span class="tag">FREE</span>':'')+'<span class="check">&#10003;</span>';
+      if(!_aiCurrentSel||_aiCurrentSel.model!==m.id) it.querySelector('.check').style.visibility='hidden';
+      it.addEventListener('click',()=>setAiModel(g.provider,m));
+      dd.appendChild(it);
+    });
+  });
+  if(!hasModels){ dd.innerHTML='<div class="ai-model-dd-empty">No models available for the configured providers.</div>'; }
+  else if(keys.groq&&!getGroqModelsSync()){
+    const note=document.createElement('div'); note.className='ai-model-dd-note'; note.textContent='Loading models from Groq…';
+    dd.appendChild(note);
+    getGroqModels().then(()=>{ if(document.getElementById('ai-model-dd')===dd&&dd.classList.contains('open')) openAiModelDropdown(); });
+  }
+  else if(keys.openrouter&&!getOpenRouterFreeSync()){
+    const note=document.createElement('div'); note.className='ai-model-dd-note'; note.textContent='Loading free models from OpenRouter…';
+    dd.appendChild(note);
+    getOpenRouterFreeModels().then(()=>{ if(document.getElementById('ai-model-dd')===dd&&dd.classList.contains('open')) openAiModelDropdown(); });
+  }
+  const r=btn.getBoundingClientRect();
+  const w=Math.max(r.width,280);
+  dd.style.width=w+'px';
+  dd.style.top=(r.bottom+6)+'px';
+  dd.style.left=Math.max(8,r.right-w)+'px';
+  dd.classList.add('open');
+}
+function closeAiModelDropdown(){
+  const dd=document.getElementById('ai-model-dd'); if(dd) dd.classList.remove('open');
+}
+document.addEventListener('click',e=>{
+  const dd=document.getElementById('ai-model-dd');
+  const btn=document.getElementById('ai-model-btn');
+  if(dd&&dd.classList.contains('open')&&(!btn||!btn.contains(e.target))&&!dd.contains(e.target)) closeAiModelDropdown();
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeAiModelDropdown(); });
 function _aiSystemPrompt(ctx,views,indexes,triggers) {
   return 'You are a SQLite database expert assistant. The user is working with a local SQLite database through a browser-based manager tool.\n\n'+
     'DATABASE SCHEMA:\nTables:\n'+ctx+'\nViews: '+(views.join(', ')||'none')+'\nIndexes: '+(indexes.join(', ')||'none')+'\nTriggers: '+(triggers.join(', ')||'none')+'\n\n'+
@@ -2603,33 +2808,60 @@ function _aiSystemPrompt(ctx,views,indexes,triggers) {
     '- When writing SQL, always wrap it in ```sql ... ``` code blocks.\n'+
     '- Use proper SQLite syntax (no MySQL/PostgreSQL specific features).\n'+
     '- If the user asks a question that can be answered by running a query, provide the SQL.\n'+
+    '- When the user asks a question about the data, always write the query in a ```sql ... ``` block — it will be executed automatically and you will get the results.\n'+
     '- Explain the SQL briefly when needed.\n'+
     '- If the user asks about schema/design, provide analysis based on the schema above.\n'+
     '- Format responses using markdown where helpful.';
 }
+function _stripThinking(s){
+  if(typeof s!=='string'||!s) return s;
+  s=s.replace(/<(think|thinking|reasoning|thought)>[\s\S]*?<\/(think|thinking|reasoning|thought)>/gi,' ');
+  s=s.replace(/\[\s*(think|thinking|reasoning|thought)\s*\][\s\S]*?\[\s*\/\s*(think|thinking|reasoning|thought)\s*\]/gi,' ');
+  s=s.replace(/```\s*(think|thinking|reasoning)\s*[\s\S]*?```/gi,' ');
+  s=s.replace(/^\s*(thinking|reasoning):\s*\n[\s\S]*?(?=\n\s*\n|$)/im,'');
+  return s.replace(/\n{3,}/g,'\n\n').trim();
+}
 function _callAi(messages,callback) {
-  const key=_getActiveKey();
+  const sel=getAiModelSelection();
+  let key=_getActiveKey();
+  if(sel&&sel.provider&&getAiKeys()[sel.provider]) key=sel.provider;
   if(!key){ toast('Add an API key in Settings first','error'); return; }
   const apiKey=getAiKeys()[key];
+  const model=(sel&&sel.provider===key)?sel.model:null;
   const ctx=_buildSchemaCtx(); const views=getViews(); const indexes=getIndexes(); const triggers=getTriggers();
   const system=_aiSystemPrompt(ctx,views,indexes,triggers);
   let url,body;
-  if(key==='openai'||key==='openrouter'){
-    url=key==='openai'?'https://api.openai.com/v1/chat/completions':'https://openrouter.ai/api/v1/chat/completions';
-    body={model:'gpt-3.5-turbo',messages:[{role:'system',content:system},...messages],max_tokens:1000};
+  if(key==='openai'||key==='openrouter'||key==='groq'){
+    url=key==='openai'?'https://api.openai.com/v1/chat/completions':key==='groq'?'https://api.groq.com/openai/v1/chat/completions':'https://openrouter.ai/api/v1/chat/completions';
+    body={model:model||(key==='groq'?'llama-3.3-70b-versatile':'gpt-4o-mini'),messages:[{role:'system',content:system},...messages],max_tokens:1000};
   }else if(key==='gemini'){
-    url='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+apiKey;
+    url='https://generativelanguage.googleapis.com/v1beta/models/'+(model||'gemini-2.0-flash')+':generateContent?key='+apiKey;
     body={contents:[{parts:messages.map(m=>({text:m.content}))}]};
   }
   const headers={'Content-Type':'application/json'};
   if(key!=='gemini') headers['Authorization']='Bearer '+apiKey;
   fetch(url,{method:'POST',headers,body:JSON.stringify(body)})
-    .then(r=>r.json()).then(data=>{
-      let reply='';
-      if(key==='gemini') reply=data?.candidates?.[0]?.content?.parts?.[0]?.text||'No response';
-      else reply=data?.choices?.[0]?.message?.content||'No response';
-      callback(reply);
-    }).catch(err=>callback(null,err.message));
+    .then(async r=>{
+      let data=null;
+      try{ data=await r.json(); }catch{}
+      if(!r.ok){
+        const msg=(key==='gemini'?data?.error?.message:(data?.error?.message||data?.error?.code))||('HTTP '+r.status);
+        throw new Error(msg);
+      }
+      return data;
+    }).then(data=>{
+      let reply='',errMsg='';
+      if(key==='gemini'){
+        errMsg=data?.error?.message||(data?.promptFeedback?.blockReason?'Blocked by content filter: '+data.promptFeedback.blockReason:'');
+        reply=data?.candidates?.[0]?.content?.parts?.[0]?.text||'';
+      }else{
+        errMsg=data?.error?.message||(data?.error?JSON.stringify(data.error):'');
+        reply=data?.choices?.[0]?.message?.content||'';
+      }
+      if(errMsg) return callback(null,(key==='gemini'?'Gemini API error: ':'API error: ')+errMsg);
+      if(!reply) return callback(null,'No response from the AI model. Check that the API key is valid and the provider has credits.');
+      callback(_stripThinking(reply));
+    }).catch(err=>callback(null,err.message||'Request failed'));
 }
 function _mdToHtml(t) {
   let s=escapeHtml(t);
@@ -2757,9 +2989,9 @@ function aiTask(type) {
     if(err){ chat.innerHTML+='<div class="ai-msg error">Error: '+escapeHtml(err)+'</div>'; _renderAiReply(chat,reply||''); }
     else{
       // Auto-approval: if AI returned SQL in the reply, auto-execute it and send results back
-      const sqlMatch=reply.match(/```sql\n?([\s\S]*?)```/);
-      if(sqlMatch&&(type==='summarize'||type==='report')){
-        const sql=sqlMatch[1].trim();
+      const sqlBlocks=[...reply.matchAll(/```sql\n?([\s\S]*?)```/g)].map(m=>m[1].trim());
+      const sql=sqlBlocks.length?sqlBlocks[sqlBlocks.length-1]:'';
+      if(sql&&(type==='summarize'||type==='report')){
         try{
           const res=db.exec(sql);
           if(res&&res[0]&&res[0].values){
@@ -2803,6 +3035,10 @@ function toggleAiPanel() {
     document.getElementById('btn-ai').classList.add('active');
   }
 }
+function _isReadOnlySql(sql){
+  const first=(sql.trim().replace(/^\(/,'').split(/[\s;]+/)[0]||'').toUpperCase();
+  return ['SELECT','WITH','EXPLAIN','PRAGMA','VALUES','SHOW'].includes(first);
+}
 function sendAiMessage() {
   const input=document.getElementById('ai-input'); const msg=input.value.trim();
   if(!msg) return;
@@ -2815,9 +3051,46 @@ function sendAiMessage() {
   chat.scrollTop=chat.scrollHeight;
   _callAi([{role:'user',content:msg}],function(reply,err){
     chat.removeChild(chat.lastChild);
-    if(err){ chat.innerHTML+='<div class="ai-msg error">Error: '+escapeHtml(err)+'</div>'; _renderAiReply(chat,reply||''); }
-    else _renderAiReply(chat,reply);
-    chat.scrollTop=chat.scrollHeight;
+    if(err){ chat.innerHTML+='<div class="ai-msg error">Error: '+escapeHtml(err)+'</div>'; _renderAiReply(chat,reply||''); chat.scrollTop=chat.scrollHeight; return; }
+    const sqlBlocks=[...reply.matchAll(/```sql\n?([\s\S]*?)```/g)].map(m=>m[1].trim());
+    const sql=sqlBlocks.length?sqlBlocks[sqlBlocks.length-1]:'';
+    if(sql&&_isReadOnlySql(sql)){
+      showSqlView(true);
+      const ta=document.getElementById('sql-textarea');
+      if(ta){ ta.value=sql; ta.dispatchEvent(new Event('input')); }
+      runSql();
+      _renderAiReply(chat,reply);
+      const prog=document.createElement('div'); prog.className='ai-msg assistant'; prog.style.color='color-mix(in srgb,var(--sidebar-foreground) 50%,transparent)';
+      prog.innerHTML='<em>Running the query on your data...</em>';
+      chat.appendChild(prog); chat.scrollTop=chat.scrollHeight;
+      try{
+        const res=db.exec(sql);
+        if(res&&res[0]&&res[0].values){
+          const rows=res[0].values.length; const cols=res[0].columns;
+          const sample=JSON.stringify(res[0].values.slice(0,20));
+          prog.innerHTML='<em>Query returned '+rows+' rows — working out the answer...</em>';
+          chat.scrollTop=chat.scrollHeight;
+          const follow='The user asked: "'+msg+'"\n\nYour SQL above was executed and returned '+rows+' rows with columns: '+cols.join(', ')+'. Here is the actual data (first 20 rows): '+sample+'\n\nAnswer the user\'s question directly in plain, friendly language using this real data. State the answer clearly first (e.g. "The user with the highest salary is Ahmed with $95,000"), then give a 1-2 sentence explanation. No technical jargon unless needed.';
+          _callAi([{role:'user',content:msg},{role:'assistant',content:reply},{role:'user',content:follow}],function(reply2,err2){
+            prog.remove();
+            if(err2) chat.innerHTML+='<div class="ai-msg error">Analysis error: '+escapeHtml(err2)+'</div>';
+            else _renderAiReply(chat,reply2);
+            chat.scrollTop=chat.scrollHeight;
+          });
+        }else{
+          prog.remove();
+          chat.innerHTML+='<div class="ai-msg assistant">The query ran successfully but returned no rows.</div>';
+          chat.scrollTop=chat.scrollHeight;
+        }
+      }catch(e){
+        prog.remove();
+        chat.innerHTML+='<div class="ai-msg error">The query could not run: '+escapeHtml(e.message)+'</div>';
+        chat.scrollTop=chat.scrollHeight;
+      }
+    }else{
+      _renderAiReply(chat,reply);
+      chat.scrollTop=chat.scrollHeight;
+    }
   });
 }
 function explainSql() {
@@ -2865,9 +3138,125 @@ document.addEventListener('keydown',e=>{
   if(e.key==='F5'){ e.preventDefault(); const ta=document.getElementById('sql-textarea'); if(ta&&!ta.classList.contains('hidden')) runSql(); }
 });
 
+// ================== PRODUCT TOUR ==================
+const TOUR_STEPS=[
+  {
+    target:'#tb-open',
+    title:'Open or create a database',
+    desc:'Click Open to load any .db or .sqlite file — no installation needed. Use New to create one from scratch.'
+  },
+  {
+    target:'#sample-db-btn',
+    title:'No file? Try the sample database',
+    desc:'Loads a demo database (users, orders, products, employees) instantly in your browser. Nothing leaves your machine.',
+    skipIf:function(){ return document.getElementById('welcome').classList.contains('hidden'); }
+  },
+  {
+    target:'#table-view',
+    title:'Browse your data',
+    desc:'Every table opens in a sortable, paginated grid. Click a column header to sort, or use the search box to filter.',
+    onEnter:async function(){
+      if(!db) loadSampleDb();
+      await new Promise(r=>setTimeout(r,500));
+      const t=getTables();
+      openTable(t.includes('users')?'users':(t[0]||'users'));
+    }
+  },
+  {
+    target:'#data-table-body',
+    title:'Edit any value in place',
+    desc:'Double-click any cell to edit it directly in the grid — type your change and click away to save it.'
+  },
+  {
+    target:'#sql-view',
+    title:'SQL editor with live results',
+    desc:'Write raw SQL with syntax highlighting. Run it with Ctrl+Enter or F5 and see the results instantly below.',
+    onEnter:function(){ showSqlView(); }
+  },
+  {
+    target:'#er-view',
+    title:'ER Diagram',
+    desc:'See how your tables connect. Foreign keys are detected automatically and relationships are drawn for you.',
+    onEnter:function(){ showErDiagramView(); }
+  },
+  {
+    target:'#btn-ai',
+    title:'AI Assistant',
+    desc:'A built-in AI copilot that understands your schema. Ask questions about your data in plain English.',
+    onEnter:function(){ if(!document.getElementById('rp-ai').classList.contains('visible')) toggleAiPanel(); }
+  },
+  {
+    target:'#ai-input',
+    title:'Ask your data anything',
+    desc:'Try: "Which user has the highest salary?" The AI writes the SQL, runs it, and explains the answer — no SQL needed.',
+    onEnter:function(){ if(!document.getElementById('rp-ai').classList.contains('visible')) toggleAiPanel(); }
+  }
+];
+let _tourStep=-1;
+function _tourTipHTML(i){
+  const s=TOUR_STEPS[i],last=i===TOUR_STEPS.length-1;
+  return '<div class="t-title">'+s.title+'</div><div class="t-desc">'+s.desc+'</div>'+
+    '<div class="t-actions">'+
+    (i>0?'<button class="t-btn" onclick="_tourPrev()">Back</button>':'')+
+    (last?'<button class="t-btn primary" onclick="_tourEnd(true)">Finish</button>':'<button class="t-btn primary" onclick="_tourNext()">Next</button>')+
+    '<button class="t-skip" onclick="_tourEnd(false)">Skip tour</button>'+
+    '<span class="t-count">'+(i+1)+' / '+TOUR_STEPS.length+'</span>'+
+    '</div>';
+}
+function _tourPosition(){
+  if(_tourStep<0) return;
+  const spot=document.getElementById('tour-spotlight');
+  const tip=document.getElementById('tour-tip');
+  const el=document.querySelector(TOUR_STEPS[_tourStep].target);
+  if(!el||!spot||!tip) return;
+  if(el.scrollIntoView) el.scrollIntoView({block:'center',behavior:'smooth'});
+  setTimeout(()=>{
+    if(_tourStep<0) return;
+    const el2=document.querySelector(TOUR_STEPS[_tourStep].target);
+    if(!el2) return;
+    const r=el2.getBoundingClientRect();
+    if(r.width===0&&r.height===0) return;
+    spot.style.display='block';
+    spot.style.left=(r.left-4)+'px'; spot.style.top=(r.top-4)+'px';
+    spot.style.width=(r.width+8)+'px'; spot.style.height=(r.height+8)+'px';
+    tip.style.display='block';
+    const tipW=tip.offsetWidth, tipH=tip.offsetHeight;
+    let top=r.bottom+14, left=Math.min(Math.max(8,r.left),window.innerWidth-tipW-8);
+    if(top+tipH>window.innerHeight-8) top=Math.max(8,r.top-tipH-14);
+    tip.style.top=top+'px'; tip.style.left=left+'px';
+  },250);
+}
+function _tourGo(i){
+  while(i<TOUR_STEPS.length&&TOUR_STEPS[i].skipIf&&TOUR_STEPS[i].skipIf()) i++;
+  if(i>=TOUR_STEPS.length){ _tourEnd(true); return; }
+  if(i<0){ _tourEnd(false); return; }
+  _tourStep=i;
+  document.getElementById('tour-tip').innerHTML=_tourTipHTML(i);
+  const s=TOUR_STEPS[i];
+  const r=s.onEnter?s.onEnter():null;
+  if(r&&r.then) r.then(_tourPosition); else _tourPosition();
+}
+function _tourNext(){ _tourGo(_tourStep+1); }
+function _tourPrev(){ _tourGo(_tourStep-1); }
+function _tourEnd(finished){
+  _tourStep=-1;
+  document.getElementById('tour-spotlight').style.display='none';
+  document.getElementById('tour-tip').style.display='none';
+  if(finished) try{ localStorage.setItem('instantDb_tourDone','1'); }catch{}
+  toast(finished?'Tour completed!':'Tour skipped','info');
+}
+function startTour(){
+  if(!document.getElementById('tour-spotlight')){ const d=document.createElement('div'); d.id='tour-spotlight'; document.body.appendChild(d); }
+  if(!document.getElementById('tour-tip')){ const d=document.createElement('div'); d.id='tour-tip'; document.body.appendChild(d); }
+  _tourGo(0);
+}
+window.addEventListener('resize',_tourPosition);
+
 // ================== INIT ==================
 updateDbStats();
+initAiModelSelect();
 document.getElementById('sql-textarea').addEventListener('scroll',function(){ document.getElementById('line-nums').scrollTop=this.scrollTop; });
+if(!localStorage.getItem('instantDb_tourDone')) setTimeout(startTour,800);
 </script>
 </body>
 </html>
